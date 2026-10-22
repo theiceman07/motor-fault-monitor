@@ -1,0 +1,10 @@
+# All keys optional; defaults live in src/motor_fault/config.py
+sample_rate_hz: 50          # requested app-level rate; achieved rate is measured and logged
+window_seconds: 1.0
+min_window_fill: 0.8        # window needs >= this fraction of expected samples
+stale_timeout_s: 2.0        # no new sample for this long => SENSOR ERROR
+debounce_windows: 3         # consecutive anomalous windows before a prominent alert
+i2c_bus: 1
+mpu6050_address: 0x68
+mpu6050_range_g: 2          # 2, 4, 8 or 16
+adxl345_address: 0x53

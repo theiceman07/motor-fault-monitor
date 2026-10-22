@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+data/raw/*
+data/processed/*
+data/models/*
+!data/*/.gitkeep
+faultdet.zip
