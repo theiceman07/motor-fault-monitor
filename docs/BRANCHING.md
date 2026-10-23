@@ -1,6 +1,6 @@
 # Branching and submission rules (agreed with the mentor)
 - One shared repo, teammates added as collaborators (GitHub: Settings -> Collaborators).
-- Start from `shared-base`: it has the shared code and templates but no one's results. Do not branch from someone else's branch.
+- Start from `main`: it has the shared code and templates but no one's results. Do not branch from someone else's branch.
 - `main`: shared work only (shared code, shared milestones, docs everyone agrees on). Change it through pull requests, not force-pushes.
 - Individual submissions: each student works on their own branch `ind/<your-name>` in this same repo.
   Evidence for any individually assessed milestone (your screenshots, your measurements, your commits) is committed there, from your own GitHub account.
@@ -14,6 +14,6 @@
 git clone https://github.com/theiceman07/<repo>.git && cd <repo>
 git config user.name "<your name>" && git config user.email "<your github email>"
 git fetch origin
-git switch -c <your-name> origin/shared-base     # start from the neutral shared base, NOT from another student's branch
+git switch -c <your-name> origin/main     # start from the shared main, NOT from another student's branch
 git push -u origin <your-name>
 ```
