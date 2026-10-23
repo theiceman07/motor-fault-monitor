@@ -125,3 +125,14 @@ Only commit numbers you measured yourself on your own hardware. Report false-ala
 
 ## Team workflow
 Shared repo with collaborators. Shared work on `main`; individually assessed milestones go on your own branch `ind/<your-name>`. See `docs/BRANCHING.md`.
+
+## Tested on a PC (2026-10-23, not on the Pi)
+- Secure broker in Docker (`deploy/mosquitto/run_docker.sh`, Mosquitto 2.1.2) and `python scripts/mqtt_selftest.py`: anonymous refused, wrong password refused,
+  plain TCP refused, untrusted certificate refused, correct login publishes and receives. Output: `docs/evidence/mqtt_selftest_pc_2026-10-23.txt`. Repeat it on the Pi for your own evidence.
+- Lessons from that run: the broker certificate needs a subjectAltName (`gen_certs.sh` now adds one for the host you pass); Mosquitto 2.1 rejects a loose-permission password/key file
+  (`run_docker.sh` copies them in with the right owner/mode; on the Pi use `sudo chown mosquitto: passwd && sudo chmod 600 passwd`).
+- Bridge and vision publisher both delivered through the secure broker (synthetic window file): the bridge needs real motor data on the Pi.
+
+## Reliability tools
+- `scripts/ota_model.py install <artifact>` makes a validated model the newest (active) one; `rollback` archives it so the previous model is active again; `status` lists models. Invalid artifacts are rejected before anything changes.
+- `scripts/drift_report.py --baseline <normal csvs> --current <later csv> [--out report.md]`: per-feature shift in baseline standard deviations, flags |z| >= 3. Statistics only.

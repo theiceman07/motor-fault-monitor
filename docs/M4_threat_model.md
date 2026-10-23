@@ -7,3 +7,5 @@
 | Model | Bad update breaks detection | Keep previous model file; rollback after OTA v1 -> v2 |
 
 Applied and demonstrated: 1) ____ 2) ____ (evidence file names: ____)
+
+Status: network mitigation (MQTT password + TLS) was tested on a PC on 2026-10-23: `docs/evidence/mqtt_selftest_pc_2026-10-23.txt`. Repeat on the Pi and list your own two applied mitigations above.
