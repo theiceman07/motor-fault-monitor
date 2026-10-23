@@ -87,3 +87,37 @@ Files are never overwritten; each run gets a unique name. Streamlit should stay 
 
 ## Layout
 `app.py` dashboard · `src/motor_fault/` library · `scripts/` CLIs · `tests/` (`pytest -q`, no hardware needed).
+
+
+## MQTT (secure, TLS + password)
+Broker config and scripts are in `deploy/mosquitto/` (port 8883, `allow_anonymous false`, password file, self-signed CA):
+```bash
+cd deploy/mosquitto && bash gen_certs.sh <broker-host-or-ip>       # creates certs/ca.crt, server.crt, server.key
+mosquitto_passwd -c passwd <user>                                  # then run mosquitto with mosquitto.conf
+bash test_mqtt.sh <host> <user> <password>                         # shows anonymous refused, authenticated TLS works: save as evidence
+```
+Publish window results while the dashboard runs (reads the newest `data/processed/*_windows.csv`):
+```bash
+pip install -r requirements.txt            # includes paho-mqtt
+export MQTT_USER=<user> MQTT_PASSWORD=<password>
+python scripts/mqtt_bridge.py --host <broker> --cafile deploy/mosquitto/certs/ca.crt     # topic factory/motor/score
+python scripts/mqtt_bridge.py --dry-run                                                  # print payloads, no broker
+```
+Payload: `{"ts","score","prediction","alert","model","run"}`. Never commit credentials or `certs/` private keys (`*.key`, `passwd`).
+
+## Auto-start
+`deploy/motor-monitor.service` (edit user/paths): `sudo systemctl enable --now motor-monitor`, then reboot to prove it.
+
+## Docs
+`docs/M4_threat_model.md` (fill in the two mitigations you actually applied), `docs/ARCHITECTURE.md`.
+
+## Rules for results in this repo
+Only commit numbers you measured yourself on your own hardware. Report false-alarm and detection rates as measured, even if imperfect.
+
+## Team workflow
+Shared repo with collaborators. Shared work on `main`; individually assessed milestones go on your own branch `ind/<your-name>`. See `docs/BRANCHING.md`.
+
+
+## Reliability tools
+- `scripts/ota_model.py install <artifact>` makes a validated model the newest (active) one; `rollback` archives it so the previous model is active again; `status` lists models. Invalid artifacts are rejected before anything changes.
+- `scripts/drift_report.py --baseline <normal csvs> --current <later csv> [--out report.md]`: per-feature shift in baseline standard deviations, flags |z| >= 3. Statistics only.
