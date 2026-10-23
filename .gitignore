@@ -7,3 +7,8 @@ data/processed/*
 data/models/*
 !data/*/.gitkeep
 faultdet.zip
+
+# MQTT broker secrets
+deploy/mosquitto/certs/
+deploy/mosquitto/passwd
+*.key
