@@ -1,0 +1,12 @@
+# Secure MQTT self-test: PC run, 2026-10-23 (NOT a Pi result)
+Broker: eclipse-mosquitto 2.1.2 in Docker on a Windows laptop, deploy/mosquitto config (TLS 8883, no anonymous, password file), self-signed CA, cert SAN DNS:localhost.
+Command: python scripts/mqtt_selftest.py --host localhost
+
+PASS  anonymous over TLS is refused          [Not authorized]
+PASS  wrong password is refused              [Not authorized]
+PASS  plain (non-TLS) connection is refused  [no CONNACK before timeout]
+PASS  untrusted certificate is refused       [SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certific]
+PASS  correct login over TLS connects        [Success]
+PASS  publish + receive over TLS works       [message received]
+
+End-to-end (motor bridge + vision publisher -> broker -> one subscriber): PASS (synthetic window file, 2 motor messages, 1 detection message, both over TLS with password).

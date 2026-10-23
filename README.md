@@ -88,6 +88,15 @@ Files are never overwritten; each run gets a unique name. Streamlit should stay 
 ## Layout
 `app.py` dashboard · `src/motor_fault/` library · `scripts/` CLIs · `tests/` (`pytest -q`, no hardware needed).
 
+## Status
+| Done (PC, simulation) | Still to do on the Pi |
+|---|---|
+| 30 unit tests pass (`pytest -q`) | Wire the MPU6050, `i2cdetect`, `check_i2c.py` |
+| MQTT bridge written and unit-tested (not run against a broker yet) | 3 normal + 3 fault real runs, train on real normal data, live fault demo |
+| Mosquitto TLS config and scripts written (not run yet) | False-alarm count over 5 normal runs, threshold explanation |
+| Threat model and architecture drafted | Drift report, OTA v1->v2 with rollback, crash-restart, auto-start after power cycle |
+
+No real motor data has been collected yet. The simulator is for software smoke tests only; simulation-trained models are not evidence for M4.
 
 ## MQTT (secure, TLS + password)
 Broker config and scripts are in `deploy/mosquitto/` (port 8883, `allow_anonymous false`, password file, self-signed CA):
@@ -117,6 +126,12 @@ Only commit numbers you measured yourself on your own hardware. Report false-ala
 ## Team workflow
 Shared repo with collaborators. Shared work on `main`; individually assessed milestones go on your own branch `ind/<your-name>`. See `docs/BRANCHING.md`.
 
+## Tested on a PC (2026-10-23, not on the Pi)
+- Secure broker in Docker (`deploy/mosquitto/run_docker.sh`, Mosquitto 2.1.2) and `python scripts/mqtt_selftest.py`: anonymous refused, wrong password refused,
+  plain TCP refused, untrusted certificate refused, correct login publishes and receives. Output: `docs/evidence/mqtt_selftest_pc_2026-10-23.txt`. Repeat it on the Pi for your own evidence.
+- Lessons from that run: the broker certificate needs a subjectAltName (`gen_certs.sh` now adds one for the host you pass); Mosquitto 2.1 rejects a loose-permission password/key file
+  (`run_docker.sh` copies them in with the right owner/mode; on the Pi use `sudo chown mosquitto: passwd && sudo chmod 600 passwd`).
+- Bridge and vision publisher both delivered through the secure broker (synthetic window file): the bridge needs real motor data on the Pi.
 
 ## Reliability tools
 - `scripts/ota_model.py install <artifact>` makes a validated model the newest (active) one; `rollback` archives it so the previous model is active again; `status` lists models. Invalid artifacts are rejected before anything changes.
