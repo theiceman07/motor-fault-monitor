@@ -9,6 +9,8 @@ Local motor-vibration anomaly detection: IMU/accelerometer over I²C → window 
 > trained on. It does not diagnose fault types and is **not validated** until you test it on real recordings from your
 > own motor and sensor. Simulation data is for software smoke tests only.
 
+**On a Raspberry Pi: follow `docs/PI_QUICKSTART.md`.**
+
 ## Install
 ```bash
 sudo apt update && sudo apt install -y python3-venv python3-pip i2c-tools
